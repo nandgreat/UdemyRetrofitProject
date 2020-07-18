@@ -21,7 +21,8 @@ class MainActivity : AppCompatActivity() {
 
         retService = RetrofitInstance.getRetrofitInstance().create(AlbumService::class.java)
 
-        getRequestWithQueryParameters()
+//        getRequestWithQueryParameters()
+        updloadAlbum()
 //        getRequestWithPathParameters()
 
     }
@@ -60,5 +61,24 @@ class MainActivity : AppCompatActivity() {
             val title = it.body()?.title
             Toast.makeText(this, title, Toast.LENGTH_SHORT).show()
         })
+    }
+
+    private fun updloadAlbum(){
+        val album = AlbumsItem(0, "Despicable Me", 3)
+
+        val postResponse : LiveData<Response<AlbumsItem>> = liveData {
+            val response = retService.updloadAlbum(album)
+            emit(response)
+        }
+
+        postResponse.observe(this, Observer {
+            val receivedAlbumsItem = it.body()
+
+            val result = " Album Title : ${receivedAlbumsItem?.title} \n" +
+                    " Album id : ${receivedAlbumsItem?.id} \n" +
+                    " Album userID : ${receivedAlbumsItem?.userId} \n\n\n"
+            textView.text = result
+        })
+
     }
 }
